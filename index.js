@@ -1,6 +1,7 @@
 require("dotenv").config();
 const express = require("express");
 const { MongoClient, ServerApiVersion, ObjectId } = require("mongodb");
+const cron = require("node-cron");
 const app = express();
 const port = process.env.PORT || 8080;
 
@@ -82,13 +83,14 @@ const run = async () => {
       try {
         const id = req.params.id;
 
-        const result = await customerCollection.deleteOne({ _id: ObjectId(id) });
+        const result = await customerCollection.deleteOne({
+          _id: ObjectId(id),
+        });
         res.send(result);
       } catch (error) {
         console.log(error);
       }
     });
-
   } finally {
   }
 };
@@ -97,6 +99,16 @@ run().catch((err) => console.log(err));
 
 app.get("/", (req, res) => {
   res.send("Friends Assignment API!");
+});
+
+// Schedule email sending on birthdays
+cron.schedule("0 0 * * *", async () => {
+  const today = new Date();
+  const users = await customerCollection.find({}).toArray();
+  console.log(users);
+  // users.forEach(user => {
+  //   sendBirthdayEmail(user.email, user.name);
+  // });
 });
 
 app.listen(port, () => {
