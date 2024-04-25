@@ -8,6 +8,7 @@ const globalErrorHandler = require("./src/middlewares/globalErrorHandler");
 const routes = require("./src/routes");
 const Customer = require("./src/models/customer.model");
 const ApiError = require("./src/errors/ApiError");
+const sendBirthdayEmail = require("./src/utils/sendBirthdayEmail");
 
 app.use(cors());
 app.use(express.json());
@@ -41,9 +42,9 @@ cron.schedule("0 0 * * *", async () => {
       },
     ]);
 
-    // customers.forEach(customer => {
-    //   sendBirthdayEmail(customer.email, customer.name);
-    // });
+    customers.forEach((customer) => {
+      sendBirthdayEmail(customer.email, customer.name);
+    });
   } catch (error) {
     throw new ApiError(error);
   }
