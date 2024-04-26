@@ -23,11 +23,13 @@ exports.createCustomer = catchAsync(async (req, res) => {
 
 exports.getCustomerList = catchAsync(async (req, res) => {
   const result = await Customer.find();
+  const total = await Customer.countDocuments();
   sendResponse(res, {
     status: httpStatus.OK,
     statusType: "success",
     message: "Customers fetched successfully",
     data: result,
+    meta: { total },
   });
 });
 
